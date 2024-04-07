@@ -1,27 +1,26 @@
 
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { JobListing, Spinner } from "./index"
-
 
 const JobListings = ({ isHome }) => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-            const apiUrl = `/api/jobs${isHome ? '?_limit=3' : ''}`;
+    const fetchJobs = async () => {
+        const apiUrl = `/api/jobs${isHome ? '?_limit=3' : ''}`;
 
-            try {
-                const res = await fetch(apiUrl)
-                const data = await res.json();
-                setJobs(data)
-            } catch (error) {
-                console.log('Error fetching jobs', error);
-            } finally {
-                setLoading(false);
-            }
+        try {
+            const { data } = await axios(apiUrl);
+            setJobs(data)
+        } catch (error) {
+            console.log('Error fetching jobs', error.response);
+        } finally {
+            setLoading(false);
         }
+    }
 
+    useEffect(() => {
         fetchJobs();
     }, [])
 
